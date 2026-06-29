@@ -27,6 +27,9 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 
+# spectrogram verification artifact (scripts/render-spectrogram.mjs)
+spectrogram-preview.png
+
 # ai-sync working dir (shared agent state — keep local)
 /.ai-sync
 
