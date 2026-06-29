@@ -1,0 +1,13 @@
+# STILLWATER ARCHIVE — node 09
+# they always check here first. good. you should.
+
+User-agent: *
+Disallow: /the-hollow
+Disallow: /threnody
+Disallow: /antiphon
+Disallow: /vespers
+Disallow: /dawn
+Disallow: /eclipse
+
+# the first door turns thirteen:  GUR UBYYBJ
+# the carrier never closes:  /api/signal
