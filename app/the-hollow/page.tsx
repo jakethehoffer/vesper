@@ -25,9 +25,11 @@ export default function TheHollow() {
         <details className="hint">
           <summary>signal weak? take my hand</summary>
           <p className="dim">
-            A Vigenère cipher. The repeating key is <span className="amber">VESPER</span> — my name.
-            Decode it and the plaintext tells you the word that opens the next door, and names the first
-            fragment to keep.
+            A Vigenère cipher — the repeating key is <span className="amber">VESPER</span>, my name.
+            Subtract the key from the letters (any Vigenère decoder will do it): the first three,{' '}
+            <span className="amber">OLW</span> under <span className="amber">VES</span>, give{' '}
+            <span className="amber">THE</span>. Decode the rest; the plaintext names the word that opens
+            the next door and your first fragment to keep.
           </p>
         </details>
       </section>
