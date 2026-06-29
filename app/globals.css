@@ -173,7 +173,6 @@ a:hover { color: var(--bone); border-color: var(--trace); }
   content: attr(data-glitch);
   position: absolute;
   inset: 0;
-  margin-left: 0.5em;
   pointer-events: none;
 }
 .wordmark[data-glitch]::before {
