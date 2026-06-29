@@ -4,6 +4,8 @@
 Stillwater Archive has been looping a three-word message into the dark for decades. Tonight, for the
 first time in longer than its records can count, someone is listening back — you.
 
+### ▶ Play it live: **https://vesper-chi-gold.vercel.app**
+
 Five escalating puzzles, all signals-themed (**ROT13 → Vigenère → Hex → Morse → synthesis**),
 wrapped in a CRT-terminal world with a full "This Is Not A Game" layer: a talking terminal, a live
 reactive oscilloscope, hidden source comments, dev-console messages, cryptic HTTP headers, a secret
