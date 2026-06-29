@@ -29,3 +29,6 @@ npm-debug.log*
 
 # ai-sync working dir (shared agent state — keep local)
 /.ai-sync
+
+.vercel
+.env*
