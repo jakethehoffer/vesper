@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Typewriter from './Typewriter';
 import { setVesper } from '@/lib/bus';
-import { saveSolved } from '@/lib/progress';
+import { saveSolved, getProgress, type Fragment } from '@/lib/progress';
 
 type Kind = 'system' | 'vesper' | 'you' | 'reveal';
 interface Line {
@@ -82,7 +82,9 @@ export default function Terminal() {
   const respond = async (raw: string) => {
     const cmd = raw.trim();
     if (!cmd) return;
-    setDone((d) => [...d, mk({ kind: 'you', text: `vesper:// ${cmd}` })]);
+    // route the echo through the queue so it is never out of order with lines
+    // VESPER is still typing (typing ahead while it speaks no longer interleaves)
+    push([{ kind: 'you', text: `vesper:// ${cmd}` }]);
     setHistory((h) => [cmd, ...h].slice(0, 40));
     setHIndex(-1);
     const c = cmd.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
@@ -94,6 +96,7 @@ export default function Terminal() {
         { kind: 'system', text: '  listen   — hear the first door' },
         { kind: 'system', text: '  who      — what i am, as far as i know it' },
         { kind: 'system', text: '  signal   — the carrier i leave open' },
+        { kind: 'system', text: '  log      — what you have recovered so far' },
         { kind: 'system', text: '  clear    — wipe the screen, not the memory' },
         { kind: 'vesper', text: 'everything else, i will try to understand. say a name to me and i will know if it is the right one.' },
       ]);
@@ -126,6 +129,26 @@ export default function Terminal() {
     }
     if (c === 'signal') {
       push([{ kind: 'vesper', text: 'the carrier never closes. /api/signal. i leave a light on there for anyone still tuning.' }]);
+      return;
+    }
+    if (c === 'log' || c === 'status' || c === 'progress') {
+      const p = getProgress();
+      const order: Fragment[] = ['EVENING', 'STAR', 'ANSWERS'];
+      const have = order.filter((f) => p.fragments.includes(f));
+      const lines: Omit<Line, 'id'>[] = [
+        { kind: 'system', text: '── listening log · node 09 ──' },
+        { kind: 'system', text: `channels answered: ${p.solved.length}` },
+        { kind: 'system', text: `fragments recovered: ${have.length} of ${order.length}` },
+      ];
+      for (const f of order) {
+        lines.push({ kind: 'system', text: p.fragments.includes(f) ? `  ◆ ${f}` : '  · [ silent channel ]' });
+      }
+      lines.push(
+        have.length === order.length
+          ? { kind: 'vesper', text: 'you have all three. say them as one sentence, in the order the sky gives them.' }
+          : { kind: 'vesper', text: 'keep listening. the rest are behind doors you have not opened.' },
+      );
+      push(lines);
       return;
     }
     if (c.startsWith('sudo')) {
