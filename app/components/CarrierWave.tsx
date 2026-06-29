@@ -6,6 +6,9 @@ import { onVesper, type VesperMode } from '@/lib/bus';
 // The signature element: an oscilloscope baseline that lives at the bottom of
 // every page. Calm when VESPER is idle, agitated when it speaks, a clean
 // traveling pulse on a correct answer, a flatline convulsion on a wrong one.
+// Capped at ~30fps — for a slow ambient wave that's visually identical to 60fps
+// and halves the redraw work (kinder to mobile batteries). The browser already
+// pauses rAF on hidden tabs, so no work happens off-screen either.
 export default function CarrierWave() {
   const ref = useRef<HTMLCanvasElement>(null);
   const modeRef = useRef<VesperMode>('idle');
@@ -41,6 +44,8 @@ export default function CarrierWave() {
     let raf = 0;
     let t = 0;
     let amp = 6;
+    let last = 0;
+    const INTERVAL = 1000 / 30;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -50,19 +55,15 @@ export default function CarrierWave() {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${H}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (reduce) draw(); // keep the static wave visible after a resize
     };
-    resize();
-    window.addEventListener('resize', resize);
 
-    const frame = () => {
+    const draw = () => {
       const w = window.innerWidth;
       const mid = H * 0.6;
       const mode = modeRef.current;
       const color = COLORS[mode];
       const isError = mode === 'error';
-
-      amp += (TARGET[mode] - amp) * 0.06;
-      pulseRef.current *= 0.965;
       const pulse = pulseRef.current;
 
       ctx.clearRect(0, 0, w, H);
@@ -96,14 +97,24 @@ export default function CarrierWave() {
       ctx.lineWidth = 4.5;
       ctx.stroke();
       ctx.globalAlpha = 1;
-
-      if (!reduce) {
-        t += 0.025;
-        raf = requestAnimationFrame(frame);
-      }
     };
 
-    frame();
+    // ~30fps loop; rates retuned from the old 60fps values for equivalent timing
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      if (now - last < INTERVAL) return;
+      last = now;
+      amp += (TARGET[modeRef.current] - amp) * 0.12;
+      pulseRef.current *= 0.931;
+      t += 0.05;
+      draw();
+    };
+
+    resize();
+    window.addEventListener('resize', resize);
+    if (reduce) draw();
+    else raf = requestAnimationFrame(loop);
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
