@@ -12,10 +12,11 @@
   --bone: #e8e4d8;
   --bone-dim: rgba(232, 228, 216, 0.52);
   --bone-faint: rgba(232, 228, 216, 0.16);
+  --placeholder: rgba(232, 228, 216, 0.46);
   --trace: #6fd0dc;
   --trace-deep: #2f7a82;
   --signal: #d7b36b;
-  --alert: #c8503c;
+  --alert: #d05a44;
   --line: rgba(232, 228, 216, 0.12);
 
   --font-voice: var(--font-space), ui-monospace, monospace;
@@ -264,7 +265,7 @@ a:hover { color: var(--bone); border-color: var(--trace); }
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.field input::placeholder { color: var(--bone-faint); text-transform: none; letter-spacing: 0.04em; }
+.field input::placeholder { color: var(--placeholder); text-transform: none; letter-spacing: 0.04em; }
 .field input:focus { outline: none; }
 
 .btn {
@@ -355,11 +356,18 @@ hr.rule {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body::after { animation: none; opacity: 0.45; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  body::after { opacity: 0.45; }
   .wordmark[data-glitch]::before,
-  .wordmark[data-glitch]::after { animation: none; }
-  .caret::after { animation: none; }
-  * { scroll-behavior: auto !important; }
+  .wordmark[data-glitch]::after { opacity: 0; }
+  .caret::after { opacity: 1; }
 }
 
 /* ============================================================
@@ -474,7 +482,7 @@ article > .lede { margin-bottom: 1.7rem; }
   color: var(--signal);
   margin-right: 0.85em;
 }
-.who.you { color: var(--trace-deep); }
+.who.you { color: var(--trace); }
 .term-reveal { font-family: var(--font-data); padding: 0.5rem 0; }
 .term-form {
   display: flex;
@@ -499,7 +507,7 @@ article > .lede { margin-bottom: 1.7rem; }
   letter-spacing: 0.04em;
 }
 .term-form input:focus { outline: none; }
-.term-form input::placeholder { color: var(--bone-faint); }
+.term-form input::placeholder { color: var(--placeholder); }
 
 /* fragments & endgame */
 .frag-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1.5rem 0; }

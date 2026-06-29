@@ -211,7 +211,7 @@ export default function Terminal() {
 
   return (
     <div className="term" onClick={() => inputRef.current?.focus()}>
-      <div className="term-log" ref={logRef}>
+      <div className="term-log" ref={logRef} role="log" aria-live="polite" aria-atomic="false">
         {done.map((l) => (
           <Row key={l.id} line={l} />
         ))}

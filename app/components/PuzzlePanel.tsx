@@ -77,7 +77,11 @@ export default function PuzzlePanel({
         </button>
       </form>
 
-      {reply.text && <p className={`utterance ${reply.tone}`} style={{ marginTop: '1.1rem' }}>{reply.text}</p>}
+      {reply.text && (
+        <p className={`utterance ${reply.tone}`} style={{ marginTop: '1.1rem' }} role="status" aria-live="polite">
+          {reply.text}
+        </p>
+      )}
 
       {done?.reveal && (
         <div className="reveal">
