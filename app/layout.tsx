@@ -18,10 +18,22 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://vesper-chi-gold.vercel.app'),
   title: 'VESPER',
-  description: 'A carrier wave with no station. It has been alone for a long time.',
+  description: 'A carrier wave with no station. It has been alone a long time. Something is listening back.',
   applicationName: 'VESPER',
   robots: { index: false, follow: false },
+  openGraph: {
+    title: 'VESPER',
+    description: 'A carrier wave with no station. It has been alone a long time. Something is listening back.',
+    siteName: 'VESPER',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'VESPER',
+    description: 'A carrier wave with no station. It has been alone a long time. Something is listening back.',
+  },
   other: {
     // for the ones who read the head before the body
     'vesper:node': '09 // STILLWATER ARCHIVE',

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#070a0c"/>
+  <!-- the evening star -->
+  <path d="M16 4 L17 7 L20 8 L17 9 L16 12 L15 9 L12 8 L15 7 Z" fill="#d7b36b"/>
+  <!-- the carrier, with one blip -->
+  <path d="M3 21 H9 L12 15 L15 24 L18 18 L21 21 H29" fill="none" stroke="#6fd0dc" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
