@@ -555,6 +555,38 @@ code {
   border: 1px solid var(--line);
 }
 
+/* opt-in sound toggle, top-center where the corner readouts never reach */
+.sound-toggle {
+  position: fixed;
+  top: 0.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7ch;
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  background: rgba(7, 10, 12, 0.72);
+  border: 1px solid var(--line);
+  padding: 0.42rem 0.85rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.sound-toggle:hover { color: var(--bone); border-color: var(--trace-deep); }
+.sound-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bone-faint);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.sound-dot.on { background: var(--trace); box-shadow: 0 0 9px var(--trace); }
+
 @media (max-width: 680px) {
   .chrome { display: none; }
   .term-log { max-height: 52vh; }
