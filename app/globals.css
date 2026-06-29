@@ -587,6 +587,15 @@ code {
 }
 .sound-dot.on { background: var(--trace); box-shadow: 0 0 9px var(--trace); }
 
+/* native audio player, kept dark and inside the frame */
+audio {
+  width: 100%;
+  color-scheme: dark;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  filter: grayscale(0.3);
+}
+
 @media (max-width: 680px) {
   .chrome { display: none; }
   .term-log { max-height: 52vh; }
