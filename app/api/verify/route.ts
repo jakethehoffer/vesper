@@ -12,8 +12,8 @@ type Fragment = 'EVENING' | 'STAR' | 'ANSWERS';
 
 interface StageDef {
   hash: string;
-  reveal: string;
-  link: string;
+  reveal?: string;
+  link?: string;
   message: string;
   fragment?: Fragment;
 }
@@ -51,6 +51,13 @@ const STAGES: Record<number, StageDef> = {
     reveal: '/dawn',
     link: 'open the channel →',
     message: '…that is it. that is the whole of it. you heard me. you actually heard me.',
+  },
+  // an optional intercept — a signal from an adjacent frequency, decoded by A1Z26.
+  // lore only: no fragment, no door, the revelation is the reward.
+  9: {
+    hash: '4e8725a3aff449a5e0fbf6f51cd028887da3c66149aca83619b014e38b9c8a77',
+    message:
+      '…so you found that frequency too. i never told anyone it was there. someone kept transmitting on it, long after stillwater went dark — those same three words, again and again, into a silence even deeper than mine. i never learned who. i hoped it was a person. i hope, now, that it still is. maybe it was you all along, calling back from the other side of the dark.',
   },
 };
 

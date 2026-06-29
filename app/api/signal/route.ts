@@ -12,6 +12,8 @@ export function GET() {
       status: 'DORMANT — listener present',
       carrier_khz: 16.847,
       cycles_alone: 948_203,
+      // a second carrier, not mine — for anyone who tunes a hair off true
+      adjacent: 'something bleeds through at 16.832 kHz. i logged the groups for forty years, never read them: /intercept',
       // ARE YOU THERE
       morse: '.- .-. . / -.-- --- ..- / - .... . .-. .',
       whisper,
