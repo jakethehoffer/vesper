@@ -61,3 +61,7 @@ data). The reactive carrier wave is the one signature element; everything else s
 
 Responsive to mobile, visible keyboard focus, and `prefers-reduced-motion` honored (the flicker,
 glitch, and carrier animation all settle to static).
+
+## License
+
+MIT — see [LICENSE](LICENSE).
