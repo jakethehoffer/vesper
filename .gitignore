@@ -35,3 +35,11 @@ spectrogram-preview.png
 
 .vercel
 .env*
+
+# local-only: answer key, puzzle generator, and integrity tests — kept out of
+# the public repo so the game stays solvable (still on disk for local dev)
+/GAMEMASTER.md
+/scripts/forge.mjs
+/scripts/forge-transmission.mjs
+/tests/puzzles.test.mjs
+/tests/verify-core.test.mjs
