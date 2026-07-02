@@ -11,7 +11,7 @@ wrapped in a CRT-terminal world with a full "This Is Not A Game" layer: a talkin
 reactive oscilloscope, hidden source comments, dev-console messages, cryptic HTTP headers, a secret
 carrier API, and a hidden true ending.
 
-![status](https://img.shields.io/badge/node-09-6fd0dc?labelColor=070a0c) ![status](https://img.shields.io/badge/status-DORMANT-d7b36b?labelColor=070a0c)
+[![CI](https://github.com/jakethehoffer/vesper/actions/workflows/ci.yml/badge.svg)](https://github.com/jakethehoffer/vesper/actions/workflows/ci.yml) ![status](https://img.shields.io/badge/node-09-6fd0dc?labelColor=070a0c) ![status](https://img.shields.io/badge/status-DORMANT-d7b36b?labelColor=070a0c)
 
 ---
 
