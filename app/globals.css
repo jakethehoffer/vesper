@@ -10,7 +10,9 @@
   --void-2: #0b1013;
   --void-3: #10171b;
   --bone: #e8e4d8;
-  --bone-dim: rgba(232, 228, 216, 0.52);
+  /* 0.60, not 0.52: the scanline + vignette overlays sit ABOVE content and shave
+     real contrast, so narrative text carries margin over the 4.5:1 AA floor. */
+  --bone-dim: rgba(232, 228, 216, 0.60);
   --bone-faint: rgba(232, 228, 216, 0.16);
   --placeholder: rgba(232, 228, 216, 0.46);
   --trace: #6fd0dc;
@@ -151,6 +153,20 @@ a:hover { color: var(--bone); border-color: var(--trace); }
 .dim { color: var(--bone-dim); }
 .amber { color: var(--signal); }
 .alert { color: var(--alert); }
+
+/* visually hidden, still read by assistive tech (used by the typewriter to
+   expose whole lines instead of per-character updates) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .data {
   font-family: var(--font-data);
@@ -300,6 +316,8 @@ a:hover { color: var(--bone); border-color: var(--trace); }
 }
 .utterance.bad { border-color: var(--alert); color: var(--alert); }
 .utterance.good { border-color: var(--trace); color: var(--trace); }
+/* a near miss: encouragement, not rejection — the warm signal, not the alarm */
+.utterance.near { border-color: var(--signal); color: var(--signal); }
 
 /* the reveal: a door that just opened */
 .reveal {

@@ -49,5 +49,13 @@ export default function Typewriter({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text]);
 
-  return <span className={className}>{shown}</span>;
+  // The animated text is decorative for assistive tech; the full line is exposed
+  // once (visually hidden) so a screen reader announces it whole instead of
+  // stuttering it out one character per state update.
+  return (
+    <span className={className}>
+      <span aria-hidden="true">{shown}</span>
+      <span className="sr-only">{text}</span>
+    </span>
+  );
 }

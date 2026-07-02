@@ -10,6 +10,7 @@ interface VerifyResult {
   reveal?: string;
   link?: string;
   fragment?: Fragment;
+  near?: boolean;
 }
 
 export default function PuzzlePanel({
@@ -22,7 +23,7 @@ export default function PuzzlePanel({
   const [value, setValue] = useState('');
   const [busy, setBusy] = useState(false);
   const [shake, setShake] = useState(false);
-  const [reply, setReply] = useState<{ tone: 'bad' | 'good' | ''; text: string }>({ tone: '', text: '' });
+  const [reply, setReply] = useState<{ tone: 'bad' | 'good' | 'near' | ''; text: string }>({ tone: '', text: '' });
   const [done, setDone] = useState<VerifyResult | null>(null);
 
   async function submit(e: React.FormEvent) {
@@ -46,7 +47,7 @@ export default function PuzzlePanel({
         setDone(data);
       } else {
         setVesper('error');
-        setReply({ tone: 'bad', text: data.message ?? 'no. not that.' });
+        setReply({ tone: data.near ? 'near' : 'bad', text: data.message ?? 'no. not that.' });
         setShake(true);
         setTimeout(() => setShake(false), 420);
       }

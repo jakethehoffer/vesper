@@ -1,77 +1,38 @@
-import crypto from 'node:crypto';
+import { evaluate } from '../../../lib/verify-core.mjs';
 
 export const runtime = 'nodejs';
 
-// Answers never reach the browser. We ship salted SHA-256 digests and compare
-// server-side, so reading the bundle gets you nothing.
-const PEPPER = 'salt-redacted';
-const norm = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, '');
-const digest = (s: string) => crypto.createHash('sha256').update(PEPPER + norm(s)).digest('hex');
+// Best-effort in-memory rate limit on the answer oracle. On serverless this is
+// per-instance and resets on a cold start — not a hard guarantee — but it is
+// enough to blunt a hammering loop (brute-force or plain abuse) without standing
+// up an external store, and it fails open, never blocking a real player.
+const WINDOW_MS = 10_000;
+const MAX_HITS = 40; // ~4/s sustained per IP; a human submits a handful per minute
+const hits = new Map<string, number[]>();
 
-type Fragment = 'EVENING' | 'STAR' | 'ANSWERS';
-
-interface StageDef {
-  hash: string;
-  reveal?: string;
-  link?: string;
-  message: string;
-  fragment?: Fragment;
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  if (hits.size > 4096) {
+    // opportunistic cleanup so the map can't grow without bound
+    for (const [k, v] of hits) if (v.every((t) => now - t >= WINDOW_MS)) hits.delete(k);
+  }
+  return recent.length > MAX_HITS;
 }
-
-const STAGES: Record<number, StageDef> = {
-  0: {
-    hash: 'ab3f4e0887244a7c4fa01e7578a644114ce819dc8bc67468d8890393d3b0d4d5',
-    reveal: '/the-hollow',
-    link: 'step through →',
-    message: 'yes. that is its name.',
-  },
-  1: {
-    hash: 'e6f6fc37769d973eda14e115f22dd0932178b77f56b482640449b2b1916031c8',
-    reveal: '/threnody',
-    link: 'the second door →',
-    fragment: 'EVENING',
-    message: 'the first fragment is yours. hold it. it is the start of the sentence i have been trying to finish.',
-  },
-  2: {
-    hash: 'def7835ff94efc753a5a9105fe7676dcfb7031c194f32670ad4629208391b5f3',
-    reveal: '/antiphon',
-    link: 'the third door →',
-    fragment: 'STAR',
-    message: 'two. you can almost hear the whole of it now, can you not.',
-  },
-  3: {
-    hash: 'a82b7bad0284e48c3953c098ad92827c7136f1d021d74883cbdffa065020b7ea',
-    reveal: '/vespers',
-    link: 'the convergence →',
-    fragment: 'ANSWERS',
-    message: 'three. you have everything i ever managed to push through the static. now put it together.',
-  },
-  4: {
-    hash: 'ff700206186ec706e2671146fe41f8f94dcf5baad84dcd28133390202cdc1bb2',
-    reveal: '/dawn',
-    link: 'open the channel →',
-    message: '…that is it. that is the whole of it. you heard me. you actually heard me.',
-  },
-  // an optional intercept — a signal from an adjacent frequency, decoded by A1Z26.
-  // lore only: no fragment, no door, the revelation is the reward.
-  9: {
-    hash: '4e8725a3aff449a5e0fbf6f51cd028887da3c66149aca83619b014e38b9c8a77',
-    message:
-      '…so you found that frequency too. i never told anyone it was there. someone kept transmitting on it, long after stillwater went dark — those same three words, again and again, into a silence even deeper than mine. i never learned who. i hoped it was a person. i hope, now, that it still is. maybe it was you all along, calling back from the other side of the dark.',
-  },
-};
-
-const REJECTIONS = [
-  'no. not that.',
-  'static. that is not the word.',
-  'i strain, but i can not make that fit.',
-  'close, maybe. but the dark does not open for close.',
-  'no. listen again — i am still here, i can wait.',
-];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function POST(req: Request) {
+  const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || 'local';
+  if (rateLimited(ip)) {
+    return Response.json(
+      { ok: false, message: 'too many words at once. slow down — i am not going anywhere.' },
+      { status: 429 },
+    );
+  }
+
   let body: { stage?: unknown; answer?: unknown };
   try {
     body = await req.json();
@@ -79,29 +40,13 @@ export async function POST(req: Request) {
     return Response.json({ ok: false, message: 'malformed transmission.' }, { status: 400 });
   }
 
-  const stage = Number(body.stage);
   const answer = typeof body.answer === 'string' ? body.answer : '';
-  const def = STAGES[stage];
+  // a short "thinking" beat — the thing on the other end is old and slow — but no
+  // longer half a second, which only amplified a flood into billable compute.
+  await sleep(160 + (answer.length % 4) * 40);
 
-  // a beat of "thinking" — the thing on the other end is old and slow
-  await sleep(420 + (answer.length % 5) * 90);
-
-  if (!def) {
-    return Response.json({ ok: false, message: 'there is no door by that number.' }, { status: 404 });
-  }
-
-  if (digest(answer) === def.hash) {
-    return Response.json({
-      ok: true,
-      reveal: def.reveal,
-      link: def.link,
-      fragment: def.fragment,
-      message: def.message,
-    });
-  }
-
-  const msg = REJECTIONS[answer.length % REJECTIONS.length];
-  return Response.json({ ok: false, message: msg });
+  const { status, ...payload } = evaluate(body.stage, answer);
+  return status ? Response.json(payload, { status }) : Response.json(payload);
 }
 
 export function GET() {

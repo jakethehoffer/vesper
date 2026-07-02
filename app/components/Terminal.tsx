@@ -35,7 +35,7 @@ async function verify(answer: string) {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ stage: 0, answer }),
     });
-    return (await res.json()) as { ok: boolean; reveal?: string; message?: string };
+    return (await res.json()) as { ok: boolean; reveal?: string; message?: string; near?: boolean };
   } catch {
     return { ok: false, message: 'the line went dead. say it again.' };
   }
@@ -188,9 +188,11 @@ export default function Terminal() {
       push([
         {
           kind: 'vesper',
-          text: heardRef.current
-            ? 'no. that is not the name. turn the wheel back and listen again.'
-            : 'i do not know that word. say  listen  and i will give you the first door.',
+          text: res.near
+            ? 'almost — you are a single letter off. turn the wheel once more and say it clean.'
+            : heardRef.current
+              ? 'no. that is not the name. turn the wheel back and listen again.'
+              : 'i do not know that word. say  listen  and i will give you the first door.',
         },
       ]);
     }
@@ -216,7 +218,9 @@ export default function Terminal() {
           <Row key={l.id} line={l} />
         ))}
         {current && (current.kind === 'vesper' || current.kind === 'system') && (
-          <p className={`term-line ${current.kind}`}>
+          // aria-hidden while typing: the completed line is announced once when it
+          // lands in `done` below, so the live region never reads it char-by-char.
+          <p className={`term-line ${current.kind}`} aria-hidden="true">
             {current.kind === 'vesper' && <span className="who">vesper</span>}
             <Typewriter text={current.text} speed={current.kind === 'system' ? 8 : 22} onDone={advance} />
           </p>
